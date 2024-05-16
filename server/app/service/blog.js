@@ -24,70 +24,6 @@ class BlogService extends Service {
 
   handleTOC(info) {
     var result = toc(info.markdownContent).json;
-
-    // 计算 toc，换成成下面的格式
-    //   "toc": [ 
-    //     { "name": "章节1", "anchor": "title-1" },
-    //     { "name": "章节2", "anchor": "title-2", 
-    //         "children": [
-    //             { "name": "章节2-1", "anchor": "title-2-1" },
-    //             { "name": "章节2-2", "anchor": "title-2-2" },
-    //         ]
-    //     }
-    // ],
-
-    // 计算出最小标题是多少
-    // var min = 6;
-    // for (var i of result) {
-    //   if (i.lvl < min) {
-    //     min = i.lvl;
-    //   }
-    // }
-
-    // var tocResult = [];
-    // var childArr = {
-    //   h1: [],
-    //   h2: [],
-    //   h3: [],
-    //   h4: [],
-    //   h5: [],
-    //   h6: []
-    // }
-
-    // var curLvl = min; // 默认从最大的一级开始记录
-
-    // for (var item of result) {
-    //   if (item.lvl === min) {
-    //     childArr['h' + min].push({ name: item.content, anchor: item.slug });
-    //   } else {
-    //     if (item.lvl != curLvl) {
-    //       if (item.lvl > curLvl) {
-    //         curLvl = item.lvl;
-    //         childArr['h' + curLvl].push({ name: item.content, anchor: item.slug });
-    //       } else {
-    //         childArr['h' + (curLvl - 1)][childArr['h' + (curLvl - 1)].length - 1].children = childArr['h' + curLvl];
-    //         childArr['h' + curLvl] = [];
-    //         curLvl--;
-    //         childArr['h' + curLvl].push({ name: item.content, anchor: item.slug });
-    //       }
-    //     } else {
-    //       childArr['h' + curLvl].push({ name: item.content, anchor: item.slug });
-    //     }
-    //   }
-    // }
-
-    // for (var i = 6; i > min; i--) {
-    //   if (childArr['h' + i].length != 0) {
-    //     var index = i - 1;
-    //     childArr['h' + (index)][childArr['h' + (index)].length - 1].children = childArr['h' + i];
-    //   }
-    // }
-
-    // tocResult = childArr['h' + min]; // 将最终计算出来的结果赋值给 tocResult 数组
-
-    // info.toc = tocResult;
-
-
     function transfer(flatArr) {
       const stack = [];
       const result = [];
@@ -286,6 +222,46 @@ class BlogService extends Service {
         { description: { $regex: options.keyword, $options: 'i' } },
       ];
     }
+    const startDate = new Date('2023-01-01T00:00:00Z');
+    const endDate = new Date('2025-01-01T00:00:00Z');
+    // 生成一个包含所有月份的数组  
+    const months = Array.from({ length: 12 }, (_, i) => i + 1);
+
+    // 定义一个函数来填充缺失的月份  
+    function fillMissingMonths(result, allMonths) {
+      const filledResult = allMonths.map(month => {
+        const foundMonth = result.find(r => r._id === month);
+        return foundMonth || { _id: month, count: 0 };
+      });
+      return filledResult;
+    }
+    let month = []
+    await this.ctx.model.Blog.aggregate()
+      .match({
+        createDate: {
+          $gte: startDate.getTime(), // 开始日期的时间戳  
+          $lt: endDate.getTime() // 结束日期的时间戳（不包括）  
+        }
+      })
+      .addFields({
+        month: { $month: { $toDate: '$createDate' } } // 将时间戳转换为月份  
+      })
+      .group({
+        _id: "$month",
+        count: { $sum: 1 }
+      })
+      .sort({ _id: 1 })
+      .exec((err, rawResult) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        // 填充缺失的月份  
+        const filledResult = fillMissingMonths(rawResult, months);
+        month = filledResult
+
+      });
     const total = await this.ctx.model.Blog.countDocuments(filter);
     const rows = await this.ctx.model.Blog.find(filter)
       .skip((options.page - 1) * options.limit)
@@ -296,6 +272,7 @@ class BlogService extends Service {
     return {
       total,
       rows,
+      month
     };
   }
 }

@@ -25,10 +25,10 @@
         <template slot-scope="scope">{{ scope.row.name }} </template>
       </el-table-column>
       <el-table-column label="文章数量" align="center">
-        <template slot-scope="scope">{{ scope.row.articleCount }} </template>
+        <template slot-scope="scope">{{ scope.row.articleCount < 0 ? '0' : scope.row.articleCount }} </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
-        <el-table-column width="180" align="center">
+        <el-table-column width="220" align="center">
           <template slot-scope="scope">
             <el-tooltip
               class="item"

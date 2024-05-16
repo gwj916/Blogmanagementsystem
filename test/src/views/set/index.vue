@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <div class="block">网站信息</div>
+    <div class="block">关于我设置</div>
+    <el-input
+      style="margin-top: 15px; width: 500px;margin-bottom: 15px"
+      v-model="url"
+      placeholder="请输入内容"
+      disabled
+    ></el-input>
+    <div class="block">网站信息设置</div>
     <div class="block2">网站标题</div>
     <div style="margin-bottom: 15px; width: 500px">
       <el-input v-model="form.siteTitle" disabled></el-input>
@@ -14,7 +21,7 @@
       <el-input v-model="form.icp" disabled></el-input>
     </div>
     <el-divider></el-divider>
-    <div class="block">网站头像信息</div>
+    <div class="block">网站头像信息设置</div>
     <div style="margin-bottom: 15px">
       <el-image
         style="width: 100px; height: 100px"
@@ -22,7 +29,7 @@
       ></el-image>
     </div>
     <el-divider></el-divider>
-    <div class="block">网址图标信息</div>
+    <div class="block">网址图标信息设置</div>
     <div class="block2">网址图标地址</div>
     <div style="margin-bottom: 15px; width: 500px">
       <el-input
@@ -39,12 +46,12 @@
       ></el-image>
     </div>
     <el-divider></el-divider>
-    <div class="block">github 信息</div>
-    <div class="block2">github 名字</div>
+    <div class="block">Github 信息</div>
+    <div class="block2">Github 名字</div>
     <div style="margin-bottom: 15px; width: 500px">
       <el-input v-model="form.githubName" disabled></el-input>
     </div>
-    <div class="block2">github 地址</div>
+    <div class="block2">Github 地址</div>
     <div style="margin-bottom: 15px; width: 500px">
       <el-input v-model="form.github" disabled></el-input>
     </div>
@@ -86,6 +93,9 @@
       fullscreen
     >
       <el-form :model="form">
+        <el-form-item label="关于我设置">
+          <el-input v-model="url"></el-input>
+        </el-form-item>
         <el-form-item label="网站标题">
           <el-input v-model="form2.siteTitle"></el-input>
         </el-form-item>
@@ -133,12 +143,14 @@
 
 <script>
 import { getSetting, setSetting } from "@/api/setting.js";
+import { getabout, editabout } from "@/api/about";
 import Upload from '@/components/upload.vue'
 import {host} from '@/request.config.js';
 
 export default {
   data() {
     return {
+      url:"",
       form: {
         avatar: "",
         favicon: "",
@@ -180,24 +192,28 @@ export default {
     fetchData() {
       getSetting().then(res=>{
         this.form = res.data;
-        console.log(this.form);
-        
         // 处理图片的链接
         this.form.avatar2 = host  + this.form.avatar;
         this.form.qqQrCode2 = host  + this.form.qqQrCode;
         this.form.weixinQrCode2 = host  + this.form.weixinQrCode;
         this.form2 = {...this.form};
       })
+      getabout().then(({ data }) => {
+        this.url = data;
+      });
     },
     openEditPanel(){
       this.dialogFormVisible = true;
     },
     confirmEditSetting(){
+      editabout({ url: this.url }).then((res) => {
+      });
       setSetting(this.form2).then(()=>{
         this.dialogFormVisible = false;
         this.fetchData();
         this.$message.success('修改成功！');
       })
+       
     }
   },
 };

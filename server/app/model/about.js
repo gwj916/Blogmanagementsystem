@@ -13,7 +13,6 @@ module.exports = ({ mongoose }) => {
   );
   AboutSchema.methods.toJSON = function () {
     const obj = mongoose.Document.prototype.toJSON.call(this);
-    console.log(obj.url);
     return obj.url;
   };
   return mongoose.model('About', AboutSchema);

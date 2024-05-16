@@ -100,8 +100,9 @@ export default {
     transform-origin: center bottom;
     transition: 0.3s;
     img {
-      width: 150px;
-      height: 150px;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
     }
     &::after {
       content: "";

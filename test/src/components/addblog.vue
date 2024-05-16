@@ -22,8 +22,9 @@
     <div class="title">选择分类</div>
     <el-select
       v-model="form.select"
-      placeholder="请选择活动区域"
+      placeholder="请选择分类"
       class="select"
+      @change="change"
     >
       <el-option
         :label="item.name"
@@ -74,14 +75,16 @@ export default {
       this.id = this.$route.params.id;
       findoneblog(this.id).then((res) => {
         this.form = res.data;
-        this.form.select =
-          res.data.category === null ? "" : res.data.category.id;
+        this.form.select = res.data.category === null ? "" : res.data.category.id;
         this.$refs.toastuiEditor.invoke("setHTML", res.data.htmlContent);
       });
       this.btncontent = '确认修改'
     }
   },
   methods: {
+    change() {
+      this.$forceUpdate();
+    },
     addarticle() {
       let html = this.$refs.toastuiEditor.invoke("getHTML");
       let markdown = this.$refs.toastuiEditor.invoke("getMarkdown");
@@ -95,7 +98,6 @@ export default {
         thumb: this.form.thumb,
         markdownContent: markdown,
       };
-      console.log(obj);
       if (obj.title && obj.description && obj.htmlContent && obj.categoryId) {
         if (this.mode === "add") {
           addblog(obj).then(() => {

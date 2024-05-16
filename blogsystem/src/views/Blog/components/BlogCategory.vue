@@ -34,7 +34,7 @@ export default {
       return result.map((it) => ({
         ...it,
         isSelect: it.id === this.categoryId,
-        aside: `${it.articleCount}篇`,
+        aside: `${it.articleCount < 0 ? '0' : it.articleCount}篇`,
       }));
     },
   },

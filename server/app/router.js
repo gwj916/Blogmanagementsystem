@@ -14,6 +14,9 @@ module.exports = (app) => {
   router.get('/api/admin/whoami', auth, controller.admin.profile);
   router.put('/api/admin', auth, controller.admin.update);
 
+  // control
+  router.get('/api/control', controller.control.findcount);
+
   // setting
   router.get('/api/setting', controller.setting.index);
   router.put('/api/setting', auth, controller.setting.update);
@@ -57,8 +60,6 @@ module.exports = (app) => {
 
   // message
   router.post('/api/message', app.middleware.limit(), controller.message.add);
-  // router.post('/api/message', controller.message.add);
-  // router.delete('/api/message/:id', controller.message.remove);
   router.delete('/api/message/:id', auth, controller.message.remove);
   router.get('/api/message', controller.message.findMessages);
   // router.get('/message', controller.message.findMessages);

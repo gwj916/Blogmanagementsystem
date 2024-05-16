@@ -52,7 +52,7 @@ export const constantRoutes = [
         path: 'control',
         name: 'Control',
         component: () => import('@/views/control/index'),
-        meta: { title: '控制台', icon: 'el-icon-s-operation', auth: true }
+        meta: { title: '首页', icon: 'el-icon-s-operation', auth: true }
       }
     ]
   },
@@ -77,19 +77,19 @@ export const constantRoutes = [
     meta: { title: '文章管理', icon: 'el-icon-tickets' },
     children: [
       {
-        path: 'bloglist',
+        path: '/bloglist',
         name: 'bloglist',
         component: () => import('@/views/table/index'),
         meta: { title: '文章列表', icon: 'el-icon-document-copy', auth: true },
       },
       {
-        path: 'blogtype',
+        path: '/blogtype',
         name: 'blogtype',
         component: () => import('@/views/tree/index'),
         meta: { title: '文章分类', icon: 'el-icon-document', auth: true }
       },
       {
-        path: 'addblog',
+        path: '/addblog',
         name: 'Addblog',
         component: () => import('@/views/addblog/index'),
         meta: { title: '添加文章', icon: 'el-icon-document-add', auth: true }
@@ -148,23 +148,23 @@ export const constantRoutes = [
         path: 'board',
         name: 'Board',
         component: () => import('@/views/message/index'),
-        meta: { title: '留言板', icon: 'el-icon-collection', auth: true }
+        meta: { title: '留言管理', icon: 'el-icon-collection', auth: true }
       }
     ]
   },
 
-  {
-    path: '/aboutme',
-    component: Layout,
-    children: [
-      {
-        path: 'about',
-        name: 'About',
-        component: () => import('@/views/about/index'),
-        meta: { title: '关于我', icon: 'el-icon-s-custom', auth: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/aboutme',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'about',
+  //       name: 'About',
+  //       component: () => import('@/views/about/index'),
+  //       meta: { title: '关于我', icon: 'el-icon-s-custom', auth: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/sets',
     component: Layout,

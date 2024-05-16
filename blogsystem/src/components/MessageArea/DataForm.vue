@@ -10,7 +10,7 @@
         <input
           type="text"
           maxlength="10"
-          v-model="formData.nickname"
+          v-model.trim="formData.nickname"
           placeholder="用户昵称"
         />
         <span class="tip">{{ formData.nickname.length }}/10</span>
@@ -22,7 +22,7 @@
         <textarea
           maxlength="300"
           placeholder="输入内容"
-          v-model="formData.content"
+          v-model.trim="formData.content"
         ></textarea>
         <span class="tip">{{ formData.content.length }}/300</span>
       </div>
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -60,6 +61,11 @@ export default {
       if (this.error.nickname || this.error.content) {
         // 有错误
         return;
+      }
+      if(this.Sensitivelist.includes(this.formData.content)|| this.Sensitivelist.includes(this.formData.nickname)){
+        this.error.nickname = '名称内容包含敏感词，请修改后提交'
+        this.error.content = '名称内容包含敏感词，请修改后提交'
+        return
       }
       this.isSubmiting = true; // 正在提交，防止重复点击
       this.$emit("submit", this.formData, (successMsg) => {
